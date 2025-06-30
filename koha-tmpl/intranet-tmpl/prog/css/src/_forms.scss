@@ -1,0 +1,389 @@
+fieldset {
+    @include card;
+
+    legend {
+        border-bottom: 0 none;
+        color: #696969;
+        float: left;
+        font-weight: bold;
+        margin-bottom: .5rem;
+
+        ~ * {
+            clear: left;
+        }
+    }
+
+    fieldset {
+        box-shadow: none;
+        padding: 0;
+    }
+
+    &.fg {
+        .btn.btn-link {
+            padding: .175rem 0;
+        }
+
+        .fg-checkbox {
+            grid-column-start: 2;
+        }
+
+        .fg-row {
+            display: block;
+            margin-bottom: .7rem;
+
+            label,
+            .label {
+                font-weight: bold;
+            }
+        }
+
+        .fg-row input[type="text"],
+        .fg-row select {
+            background-color: #FFF;
+            border: 1px solid #AAAAAA;
+            border-radius: 4px;
+            color: #495057;
+            display: inline-block;
+            height: calc( 1.5em + .75rem + 2px );
+            line-height: 1.5;
+            padding: .375rem .75rem;
+            width: 100%;
+        }
+
+        .fg-row input[type="text"].flatpickr-input {
+            padding-left: calc( 1.5em + 10px );
+            width: calc( 100% - 20px );
+        }
+
+        .fg-row input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .fg-label,
+        .fg-row .required {
+            margin: .3rem 0;
+        }
+
+        .fg-text {
+            padding: .375rem .75rem;
+        }
+
+        @media only screen and ( min-width: 608px ) {
+            .fg-row {
+                column-gap: .7rem;
+                display: grid;
+                grid-template-columns: 15% 50% 15%;
+                grid-template-rows: 1fr min-content;
+
+                &.wide {
+                    grid-template-columns: 15% 85%;
+                }
+
+                input[type="text"].flatpickr-input {
+                    padding-left: calc( 1.5em + 10px );
+                    width: calc( 100% - 20px );
+                }
+            }
+
+            .fg-label {
+                justify-self: right;
+                text-align: right;
+            }
+        }
+
+        @media only screen and ( min-width: 1700px ) {
+            .fg-row {
+                grid-template-columns: 10% 35% 15%;
+            }
+        }
+
+        .hint {
+            color: #666;
+            font-size: 95%;
+            grid-column-start: 2;
+            margin: .3rem 0;
+        }
+    }
+
+    &.rows {
+        clear: left;
+        float: left;
+        margin: 0;
+        padding: 1rem;
+        width: 100%;
+
+        & + fieldset.rows {
+            margin-top: .9em;
+        }
+
+        fieldset {
+            background-color: transparent;
+            margin: 1em;
+            padding: .3em;
+
+            &.action {
+                padding: 1em;
+            }
+        }
+
+        &.inputnote {
+            clear: left;
+            float: left;
+            margin: 1em 0 0 9em;
+        }
+
+        &.left {
+            label {
+                text-align: left;
+                width: 8em;
+            }
+
+            li {
+                padding-bottom: .4em;
+            }
+
+            span {
+                label {
+                    text-align: left;
+                    width: 8em;
+                }
+            }
+        }
+
+        &.unselected {
+            background-color: #FFFFFF;
+            border: 0;
+            border-width: 0;
+        }
+
+        caption {
+            font-size: 120%;
+        }
+
+        div {
+            &.hint {
+                margin: .5rem 0;
+                margin-left: 11rem;
+            }
+        }
+
+        label {
+            float: left;
+            font-weight: bold;
+            margin-right: 1rem;
+            text-align: right;
+            width: 10rem;
+
+            &.error {
+                float: none;
+                margin-left: 1rem;
+                width: auto;
+            }
+
+            &.inline {
+                display: inline;
+                float: none;
+                margin-left: 1rem;
+            }
+
+            &.radio {
+                display: inline-block;
+                float: none;
+                margin: 0;
+                padding: 0;
+                width: auto;
+            }
+
+            &.yesno {
+                float: none;
+                width: auto;
+            }
+        }
+
+        legend {
+            // font-size: 110%;
+            // font-weight: bold;
+            // margin-left: 1em;
+        }
+
+        li {
+            clear: left;
+            float: left;
+            list-style-type: none;
+            width: 100%;
+
+            &[aria-disabled="true"] {
+                color: #999;
+            }
+
+            &.radio {
+                margin: 0;
+                padding-left: 7.5em;
+                width: auto;
+
+                input + label {
+                    margin-left: 0;
+                    padding-left: 0;
+                }
+
+                label {
+                    float: none;
+                    margin: 0 0 0 1em;
+                    width: auto;
+                }
+            }
+
+            input + label {
+                margin-left: 0;
+                padding-left: 0;
+            }
+
+            fieldset {
+                margin: 0;
+                padding: 0;
+
+                input[type="text"] {
+                    max-width: 70%;
+                }
+
+                label {
+                    width: 6em;
+                }
+
+                legend {
+                    font-size: 1.2rem;
+                    margin: 0 0 0 1em;
+                }
+
+                li.radio {
+                    padding-left: 0;
+                }
+            }
+
+            div.ms-drop {
+                label {
+                    text-align: left;
+                    width: auto;
+
+                    span {
+                        margin-left:5px;
+                        width:auto;
+                    }
+                }
+
+                ul>li.hide-radio.selected {
+                    background-color: initial;
+                    color: initial;
+                }
+            }
+
+            .select2 {
+                li {
+                    clear: none;
+                    display: inline-block;
+                    width: unset;
+                }
+            }
+        }
+
+        ol {
+            list-style-type: none;
+            padding: 1em 1em 0;
+
+            &.radio {
+                label {
+                    float: none;
+                    margin-left: 20px;
+                    margin-right: 30px;
+                    padding-left: 0;
+                    vertical-align: middle;
+                    width: auto;
+
+                    &.radio {
+                        float: left;
+                        margin-right: 1em;
+                        margin-top: 0;
+                        width: 10em;
+                    }
+                }
+
+                input {
+                    &[type="checkbox"],
+                    &[type="radio"] {
+                        margin-left: -20px;
+                    }
+                }
+            }
+
+            table {
+                display: inline-block;
+                font-size: 105%;
+                margin: 0;
+            }
+        }
+
+        p {
+            margin: 1em 0 1em 1em;
+        }
+
+        span {
+            &.label {
+                float: left;
+                font-weight: bold;
+                margin-right: 1rem;
+                text-align: right;
+                width: 10rem;
+            }
+        }
+
+        table {
+            clear: both;
+            margin: 1em 0 1em 1em;
+
+            &.dataTable {
+                margin: 0;
+            }
+
+            &.mceListBox {
+                margin: 0;
+            }
+        }
+
+        td {
+            label {
+                float: none;
+                font-weight: normal;
+                width: auto;
+            }
+        }
+
+        .inputnote {
+            clear: left;
+            float: left;
+            margin: 1em 0 0 11em;
+        }
+
+        + h3 {
+            clear: both;
+            padding-top: .5em;
+        }
+
+        .dt-container {
+            label {
+                font-weight: 400;
+                width: unset;
+            }
+        }
+
+        .dropdown-menu {
+            li {
+                padding-bottom: 0;
+            }
+        }
+
+        .toptabs {
+            clear: both;
+            margin: 1em;
+        }
+    }
+}
