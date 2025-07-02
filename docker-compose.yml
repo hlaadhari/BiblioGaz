@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: koha_root
+      MYSQL_DATABASE: koha
+      MYSQL_USER: koha
+      MYSQL_PASSWORD: koha
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  app:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - PERL_CARTON_PATH=/app/local
+      - KOHA_CONF=/app/etc/koha-conf.xml
+      - DB_TYPE=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=koha
+      - DB_USER=koha
+      - DB_PASS=koha
+
+volumes:
+  db_data: 

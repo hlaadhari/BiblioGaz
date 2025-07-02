@@ -1,0 +1,13 @@
+# Ignore local files not needed in the image
+.git
+*.swp
+*.tmp
+*.log
+*.bak
+node_modules
+local
+cover
+.DS_Store
+*.db
+*.sqlite
+*.pid 

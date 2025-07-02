@@ -7,3 +7,13 @@ consult https://wiki.koha-community.org/wiki/Debian
 If you are a developer, you should take a look at koha-testing-docker or KohaDevBox:
 https://gitlab.com/koha-community/koha-testing-docker
 https://gitlab.com/koha-community/kohadevbox
+
+To start Koha in Docker, follow these steps:
+1. Run the stack with:
+   ```sh
+   docker-compose up --build
+   ```
+2. Ensure that the `etc/koha-conf.xml` file is properly configured to point to the MySQL database of the `db` service (host `db`, user `koha`, etc.).
+   If needed, I can generate an example of this file adapted to Docker.
+
+Do you want an example of a ready-to-use `koha-conf.xml` file for Docker?
