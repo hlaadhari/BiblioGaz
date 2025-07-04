@@ -63,12 +63,12 @@
 <!-- the DBD drivers supported by Koha are mysql and Pg -->
 <!-- port info: mysql:3306 Pg:5432 (5433 on Debian) -->
 <config>
- <db_scheme>__DB_TYPE__</db_scheme>
- <database>__DB_NAME__</database>
- <hostname>__DB_HOST__</hostname>
- <port>__DB_PORT__</port>
- <user>__DB_USER__</user>
- <pass>__DB_PASS__</pass>
+ <db_scheme>mysql</db_scheme>
+ <database>koha</database>
+ <hostname>localhost</hostname>
+ <port>3306</port>
+ <user>koha</user>
+ <pass>koha</pass>
  <tls>__DB_USE_TLS__</tls>
  <ca>__DB_TLS_CA_CERTIFICATE__</ca>
  <cert>__DB_TLS_CLIENT_CERTIFICATE__</cert>
@@ -81,14 +81,14 @@
  <enable_plugins>0</enable_plugins>
  <upload_path></upload_path>
  <tmp_path></tmp_path>
- <intranetdir>__INTRANET_CGI_DIR__</intranetdir>
- <opacdir>__OPAC_CGI_DIR__/opac</opacdir>
- <opachtdocs>__OPAC_TMPL_DIR__</opachtdocs>
- <intrahtdocs>__INTRANET_TMPL_DIR__</intrahtdocs>
+ <intranetdir>/home/hlaadhari/BiblioGaz/intranet</intranetdir>
+ <opacdir>/home/hlaadhari/BiblioGaz/opac</opacdir>
+ <opachtdocs>/home/hlaadhari/BiblioGaz/koha-tmpl/opac-tmpl</opachtdocs>
+ <intrahtdocs>/home/hlaadhari/BiblioGaz/koha-tmpl/intranet-tmpl</intrahtdocs>
  <includes>__INTRANET_TMPL_DIR__/prog/en/includes/</includes>
- <logdir>__LOG_DIR__</logdir>
- <docdir>__DOC_DIR__</docdir>
- <backupdir>__BACKUP_DIR__</backupdir>
+ <logdir>/home/hlaadhari/BiblioGaz/log</logdir>
+ <docdir>/home/hlaadhari/BiblioGaz/doc</docdir>
+ <backupdir>/home/hlaadhari/BiblioGaz/backup</backupdir>
  <!-- URL of the mana KB server -->
  <!-- alternative value http://mana-test.koha-community.org to query the test server -->
  <mana_config>https://mana-kb.koha-community.org</mana_config>
@@ -101,7 +101,7 @@
  <!--
  <supportdir>__SCRIPT_NONDEV_DIR__</supportdir>
  -->
- <install_log>__MISC_DIR__/koha-install-log</install_log>
+ <install_log>/home/hlaadhari/BiblioGaz/misc/koha-install-log</install_log>
  <useldapserver>0</useldapserver><!-- see C4::Auth_with_ldap for extra configs you must add if you want to turn this on -->
  <useshibboleth>0</useshibboleth><!-- see C4::Auth_with_shibboleth for extra configs you must do to turn this on -->
  <zebra_lockdir>__ZEBRA_LOCK_DIR__</zebra_lockdir>
@@ -232,7 +232,7 @@
       dev_install is used to adjust some paths specific to dev installations
       strict_sql_modes should not be used in a production environment
       developers use it to catch bugs related to strict SQL modes -->
- <dev_install>0</dev_install>
+ <dev_install>1</dev_install>
  <strict_sql_modes>0</strict_sql_modes>
  <plugins_restricted>1</plugins_restricted>
  <plugins_restart>1</plugins_restart>
