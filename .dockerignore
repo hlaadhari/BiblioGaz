@@ -1,13 +1,63 @@
-# Ignore local files not needed in the image
+# Fichiers Git
 .git
-*.swp
+.gitignore
+.git-blame-ignore-revs
+
+# Fichiers de développement
+.vscode/
+.qodo/
+node_modules/
+yarn.lock
+package.json
+gulpfile.js
+rspack.config.js
+tsconfig.json
+cypress.config.ts
+eslint.config.mjs
+.prettierrc.js
+.stylelintrc.json
+
+# Fichiers de test
+t/
+xt/
+.proverc.dist
+
+# Documentation
+docs/
+README*
+INSTALL
+LICENSE
+MANIFEST.SKIP
+
+# Fichiers temporaires
 *.tmp
 *.log
 *.bak
-node_modules
-local
-cover
-.DS_Store
-*.db
-*.sqlite
-*.pid 
+*~
+
+# Fichiers de build
+build-resources.PL
+fix-perl-path.PL
+rewrite-config.PL
+
+# Scripts de synchronisation
+sync_to_vm.*
+start_koha_app.*
+
+# Fichiers Debian
+debian/
+
+# Cache et fichiers locaux
+local/
+cpanfile.snapshot
+
+# Fichiers de configuration spécifiques
+.htaccess
+.mailmap
+.perlcriticrc
+.perltidyrc
+.editorconfig
+.codespell-ignore
+
+# Logs
+log/

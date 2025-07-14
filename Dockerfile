@@ -1,17 +1,19 @@
 # Dockerfile pour Koha (exemple de base)
-FROM debian:bullseye-slim
+# Utiliser une image de base avec Perl pré-installé pour gagner du temps
+FROM perl:5.34-bullseye
 
 # Variables d'environnement
 ENV KOHA_HOME=/app \
     PERL_CARTON_PATH=/app/local \
-    KOHA_CONF=/app/etc/koha-conf.xml
+    KOHA_CONF=/app/etc/koha-conf.xml \
+    DEBIAN_FRONTEND=noninteractive \
+    CPAN_MIRROR=http://cpan.metacpan.org/ \
+    PERL_MM_USE_DEFAULT=1
 
-# Installer les dépendances système
+# Installer les dépendances système en une seule couche optimisée
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
-        perl \
-        carton \
         libxml2-dev \
         libxslt1-dev \
         zlib1g-dev \
@@ -33,19 +35,36 @@ RUN apt-get update && \
         ca-certificates \
         make \
         gcc \
-        && rm -rf /var/lib/apt/lists/*
+        wget \
+        && rm -rf /var/lib/apt/lists/* \
+        && apt-get clean
+
+# Optimiser cpanm et installer Carton en parallèle
+RUN cpanm --mirror $CPAN_MIRROR --notest --force \
+        Path::Tiny \
+        Module::CPANfile \
+        CPAN::Meta::Check \
+        File::pushd \
+        App::Carton \
+    && rm -rf /root/.cpanm
 
 # Créer le dossier de l'application
 WORKDIR /app
 
-# Copier le code source
-COPY . /app
+# Copier SEULEMENT le cpanfile pour optimiser le cache Docker
+COPY cpanfile ./
 
-# Installer les modules Perl via carton si cpanfile existe
-RUN if [ -f cpanfile ]; then carton install; fi
+# Installer les dépendances Perl (cette couche sera mise en cache)
+RUN carton install --deployment --cached \
+    && rm -rf /root/.cpanm \
+    && find /app/local -name "*.pod" -delete \
+    && find /app/local -name "*.3pm" -delete
+
+# Copier le reste du code source (séparé pour optimiser le cache)
+COPY . /app
 
 # Exposer le port de l'application
 EXPOSE 5000
 
-# Commande de démarrage (Plack via Starman)
+# Commande de démarrage optimisée
 CMD ["carton", "exec", "starman", "--workers", "2", "--listen", "0.0.0.0:5000", "app.psgi"] 
