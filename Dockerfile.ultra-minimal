@@ -1,0 +1,68 @@
+# Dockerfile ultra-minimal pour Koha (modules de base seulement)
+FROM perl:5.34-bullseye
+
+# Variables d'environnement
+ENV KOHA_HOME=/app \
+    KOHA_CONF=/app/etc/koha-conf.xml \
+    DEBIAN_FRONTEND=noninteractive \
+    PERL5LIB=/app/lib:/app \
+    PERL_MM_USE_DEFAULT=1
+
+# Installer les dépendances système
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        libxml2-dev \
+        libxslt1-dev \
+        zlib1g-dev \
+        libgd-dev \
+        libmagickwand-dev \
+        libssl-dev \
+        libfreetype6-dev \
+        libjpeg-dev \
+        libpng-dev \
+        libmariadb-dev-compat \
+        libmariadb-dev \
+        libdbd-mysql-perl \
+        libyaz-dev \
+        yaz \
+        libfribidi-dev \
+        git \
+        curl \
+        ca-certificates \
+        make \
+        gcc \
+        wget \
+        && rm -rf /var/lib/apt/lists/* \
+        && apt-get clean
+
+# Créer le dossier de l'application
+WORKDIR /app
+
+# Copier le cache CPAN local s'il existe
+COPY cpan_cache/ /tmp/cpan_cache/ 2>/dev/null || true
+
+# Installer SEULEMENT les modules du cache local (ultra-rapide)
+RUN echo "Installation depuis le cache local uniquement..." && \
+    if [ -d "/tmp/cpan_cache" ]; then \
+        for tarball in /tmp/cpan_cache/*.tar.gz /tmp/cpan_cache/*.tgz; do \
+            if [ -f "$tarball" ]; then \
+                echo "Installation de $(basename $tarball)..." && \
+                cpanm --notest --force "$tarball" || true; \
+            fi; \
+        done; \
+    fi && \
+    echo "Installation des modules Perl système de base..." && \
+    cpanm --notest --force \
+        HTTP::Server::Simple \
+        HTTP::Server::Simple::CGI \
+    && rm -rf /root/.cpanm /tmp/cpan_cache
+
+# Copier le code source
+COPY . /app
+
+# Exposer le port de l'application
+EXPOSE 5000
+
+# Commande de démarrage avec serveur HTTP simple
+CMD ["perl", "-MHTTP::Server::Simple::CGI", "-e", "my $server = HTTP::Server::Simple::CGI->new(5000); $server->run();"]

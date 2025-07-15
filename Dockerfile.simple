@@ -1,0 +1,73 @@
+# Dockerfile simplifié pour Koha (sans Carton)
+FROM perl:5.34-bullseye
+
+# Variables d'environnement
+ENV KOHA_HOME=/app \
+    KOHA_CONF=/app/etc/koha-conf.xml \
+    DEBIAN_FRONTEND=noninteractive \
+    PERL5LIB=/app/lib:/app \
+    PERL_MM_USE_DEFAULT=1
+
+# Installer les dépendances système
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        libxml2-dev \
+        libxslt1-dev \
+        zlib1g-dev \
+        libgd-dev \
+        libmagickwand-dev \
+        libgraphicsmagick1-dev \
+        libssl-dev \
+        libfreetype6-dev \
+        libjpeg-dev \
+        libpng-dev \
+        libmariadb-dev-compat \
+        libmariadb-dev \
+        libdbd-mysql-perl \
+        libyaz-dev \
+        yaz \
+        libfribidi-dev \
+        git \
+        curl \
+        ca-certificates \
+        make \
+        gcc \
+        wget \
+        && rm -rf /var/lib/apt/lists/* \
+        && apt-get clean
+
+# Créer le dossier de l'application
+WORKDIR /app
+
+# Copier le code source
+COPY . /app
+
+# Installer directement les modules Perl essentiels sans Carton
+RUN cpanm --notest --force \
+        Starman \
+        Plack \
+        Plack::Middleware::ReverseProxy \
+        Plack::Middleware::LogWarn \
+        CGI::Emulate::PSGI \
+        CGI::Compile \
+        Template \
+        DBI \
+        DBD::mysql \
+        JSON \
+        XML::LibXML \
+        XML::LibXSLT \
+        DateTime \
+        Modern::Perl \
+        Try::Tiny \
+        List::MoreUtils \
+        YAML::XS \
+        Email::Sender \
+        PDF::API2 \
+        && rm -rf /root/.cpanm
+
+# Exposer le port de l'application
+EXPOSE 5000
+
+# Commande de démarrage simple
+CMD ["starman", "--workers", "2", "--listen", "0.0.0.0:5000", "app.psgi"]

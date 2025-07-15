@@ -256,6 +256,78 @@ function Quick-Rebuild {
     }
 }
 
+function Switch-Dockerfile {
+    Show-Title "CHANGEMENT DE DOCKERFILE"
+    
+    # Vérifier quel Dockerfile est actuellement utilisé
+    $currentDockerfile = Get-Content "docker-compose.yml" | Select-String "dockerfile:"
+    
+    Write-Host "Dockerfiles disponibles :" -ForegroundColor Cyan
+    Write-Host "  1. Dockerfile.minimal (recommandé) - Installation rapide, modules essentiels" -ForegroundColor Green
+    Write-Host "  2. Dockerfile.simple - Installation complète sans Carton" -ForegroundColor Yellow
+    Write-Host "  3. Dockerfile - Installation complète avec Carton" -ForegroundColor Red
+    Write-Host "  4. Dockerfile.offline - Installation depuis cache local (le plus rapide)" -ForegroundColor Magenta
+    Write-Host "  5. Dockerfile.kensho - Installation avec Task::Kensho (collection complète)" -ForegroundColor Cyan
+    Write-Host ""
+    
+    if ($currentDockerfile -match "Dockerfile.minimal") {
+        Write-Message "Dockerfile actuel : Minimal (recommandé)" "INFO"
+    } elseif ($currentDockerfile -match "Dockerfile.simple") {
+        Write-Message "Dockerfile actuel : Simple (sans Carton)" "INFO"
+    } elseif ($currentDockerfile -match "Dockerfile.offline") {
+        Write-Message "Dockerfile actuel : Offline (cache local)" "INFO"
+    } elseif ($currentDockerfile -match "Dockerfile.kensho") {
+        Write-Message "Dockerfile actuel : Kensho (Task::Kensho)" "INFO"
+    } else {
+        Write-Message "Dockerfile actuel : Complet (avec Carton)" "INFO"
+    }
+    
+    Write-Host ""
+    $choice = Read-Host "Choisissez le Dockerfile à utiliser (1-5, ou Entrée pour annuler)"
+    
+    switch ($choice) {
+        "1" {
+            (Get-Content "docker-compose.yml") -replace "dockerfile: Dockerfile.*", "dockerfile: Dockerfile.minimal" | Set-Content "docker-compose.yml"
+            Write-Message "Changé vers Dockerfile.minimal (recommandé)" "SUCCESS"
+        }
+        "2" {
+            (Get-Content "docker-compose.yml") -replace "dockerfile: Dockerfile.*", "dockerfile: Dockerfile.simple" | Set-Content "docker-compose.yml"
+            Write-Message "Changé vers Dockerfile.simple" "SUCCESS"
+        }
+        "3" {
+            (Get-Content "docker-compose.yml") -replace "dockerfile: Dockerfile.*", "dockerfile: Dockerfile" | Set-Content "docker-compose.yml"
+            Write-Message "Changé vers Dockerfile complet" "SUCCESS"
+        }
+        "4" {
+            if (Test-Path "cpan_cache") {
+                (Get-Content "docker-compose.yml") -replace "dockerfile: Dockerfile.*", "dockerfile: Dockerfile.offline" | Set-Content "docker-compose.yml"
+                Write-Message "Changé vers Dockerfile.offline (cache local)" "SUCCESS"
+            } else {
+                Write-Message "Cache CPAN non trouvé. Utilisez d'abord l'option 0 pour télécharger les modules." "WARNING"
+            }
+        }
+        "5" {
+            (Get-Content "docker-compose.yml") -replace "dockerfile: Dockerfile.*", "dockerfile: Dockerfile.kensho" | Set-Content "docker-compose.yml"
+            Write-Message "Changé vers Dockerfile.kensho (Task::Kensho)" "SUCCESS"
+            Write-Message "Ce mode utilise le cache local + Task::Kensho pour une installation complète" "INFO"
+        }
+        default {
+            Write-Message "Aucun changement effectué" "INFO"
+        }
+    }
+}
+
+function Download-CpanModules {
+    Show-Title "TÉLÉCHARGEMENT DES MODULES CPAN"
+    
+    if (Test-Path "download_cpan_modules.ps1") {
+        Write-Message "Lancement du téléchargement des modules CPAN..." "INFO"
+        & .\download_cpan_modules.ps1
+    } else {
+        Write-Message "Script de téléchargement non trouvé : download_cpan_modules.ps1" "ERROR"
+    }
+}
+
 function Show-Menu {
     Clear-Host
     
@@ -269,10 +341,14 @@ function Show-Menu {
     Write-Host "║" -ForegroundColor Blue -NoNewline
     Write-Host " Menu interactif pour gérer votre environnement Koha facilement              " -ForegroundColor Gray -NoNewline
     Write-Host "║" -ForegroundColor Blue
-    Write-Host "╚═══════════════════════════════════════���══════════════════════════════════════╝" -ForegroundColor Blue
+    Write-Host "╚══════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor Blue
     Write-Host ""
     
     # Options du menu avec icônes
+    Write-Host "  📦 " -NoNewline -ForegroundColor Magenta
+    Write-Host "0. Télécharger modules CPAN " -NoNewline -ForegroundColor White
+    Write-Host "(pour installation offline)" -ForegroundColor Gray
+    
     Write-Host "  🚀 " -NoNewline -ForegroundColor Green
     Write-Host "1. Démarrer Koha " -NoNewline -ForegroundColor White
     Write-Host "(installation automatique de tous les composants)" -ForegroundColor Gray
@@ -294,6 +370,14 @@ function Show-Menu {
     Write-Host "6. Réinstaller Koha from scratch " -NoNewline -ForegroundColor White
     Write-Host "(purge + rebuild complet)" -ForegroundColor Gray
     
+    Write-Host "  ⚡ " -NoNewline -ForegroundColor Yellow
+    Write-Host "8. Rebuild rapide " -NoNewline -ForegroundColor White
+    Write-Host "(utilise le cache Docker)" -ForegroundColor Gray
+    
+    Write-Host "  🔧 " -NoNewline -ForegroundColor Magenta
+    Write-Host "9. Changer de Dockerfile " -NoNewline -ForegroundColor White
+    Write-Host "(minimal/simple/complet)" -ForegroundColor Gray
+    
     Write-Host "  👋 " -NoNewline -ForegroundColor DarkRed
     Write-Host "7. Quitter" -ForegroundColor White
     
@@ -306,7 +390,7 @@ function Show-Menu {
     Write-Host " 🔧 Toutes les dépendances et la base de données sont gérées automatiquement " -ForegroundColor Yellow -NoNewline
     Write-Host "│" -ForegroundColor DarkGray
     Write-Host "│" -ForegroundColor DarkGray -NoNewline
-    Write-Host " 🆕 L'option 6 permet de repartir d'une installation totalement propre      " -ForegroundColor Yellow -NoNewline
+    Write-Host " 🆕 L'option 6 = rebuild complet, option 8 = rebuild rapide avec cache      " -ForegroundColor Yellow -NoNewline
     Write-Host "│" -ForegroundColor DarkGray
     Write-Host "└─────────────────────────────────────────────────────────────────────────────┘" -ForegroundColor DarkGray
     Write-Host ""
@@ -316,9 +400,10 @@ function Show-Menu {
 while ($true) {
     Show-Menu
     Write-Host "🎯 " -NoNewline -ForegroundColor Green
-    $choice = Read-Host "Choisissez une option (1-7)"
+    $choice = Read-Host "Choisissez une option (0-9)"
     
     switch ($choice) {
+        "0" { Download-CpanModules }
         "1" { Start-Koha }
         "2" { Stop-Koha }
         "3" { Logs-Koha }
@@ -331,8 +416,10 @@ while ($true) {
             Write-Host ""
             break 
         }
+        "8" { Quick-Rebuild }
+        "9" { Switch-Dockerfile }
         default { 
-            Write-Message "Option invalide. Veuillez choisir entre 1 et 7." "ERROR"
+            Write-Message "Option invalide. Veuillez choisir entre 0 et 9." "ERROR"
             Start-Sleep -Seconds 2
         }
     }

@@ -13,7 +13,9 @@ services:
       - db_data:/var/lib/mysql
 
   app:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile.offline
     depends_on:
       - db
     ports:
@@ -21,7 +23,7 @@ services:
     volumes:
       - .:/app
     environment:
-      - PERL_CARTON_PATH=/app/local
+      - PERL5LIB=/app/lib:/app
       - KOHA_CONF=/app/etc/koha-conf.xml
       - DB_TYPE=mysql
       - DB_HOST=db

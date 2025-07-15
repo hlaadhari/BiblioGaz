@@ -39,14 +39,35 @@ RUN apt-get update && \
         && rm -rf /var/lib/apt/lists/* \
         && apt-get clean
 
-# Optimiser cpanm et installer Carton en parallèle
+# Installer les dépendances de base et Carton manuellement
 RUN cpanm --mirror $CPAN_MIRROR --notest --force \
         Path::Tiny \
         Module::CPANfile \
         CPAN::Meta::Check \
         File::pushd \
-        App::Carton \
+        Try::Tiny \
+        Class::Tiny \
+        Capture::Tiny \
+        HTTP::Tinyish \
+        File::Which \
+        IPC::Run3 \
+        Win32::ShellQuote \
+        URI \
+        CPAN::Common::Index \
+        ExtUtils::Helpers \
+        ExtUtils::Config \
+        ExtUtils::InstallPaths \
     && rm -rf /root/.cpanm
+
+# Installer Carton manuellement depuis GitHub
+RUN wget -O carton.tar.gz https://github.com/perl-carton/carton/archive/refs/tags/v1.0.35.tar.gz \
+    && tar -xzf carton.tar.gz \
+    && cd carton-1.0.35 \
+    && perl Makefile.PL \
+    && make \
+    && make install \
+    && cd .. \
+    && rm -rf carton-1.0.35 carton.tar.gz
 
 # Créer le dossier de l'application
 WORKDIR /app
